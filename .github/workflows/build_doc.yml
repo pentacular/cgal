@@ -65,7 +65,7 @@ jobs:
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
           ROUND=${{ steps.get_round.outputs.result }}
           wget cgal.github.io -O tmp.html
-          if $(cat tmp.html |egrep -q "\/$PR_NUMBER\/$ROUND"); then
+          if ! $(cat tmp.html |egrep -q "\/$PR_NUMBER\/$ROUND"); then
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
             cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/$ROUND
@@ -75,7 +75,7 @@ jobs:
             mv tmp.html index.html
             git add ${PR_NUMBER}/$ROUND && git commit -a -m "Add ${PR_NUMBER} $ROUND" && git push -u origin master
           else
-            exit 1
+            exit 0
           fi
 
       - name: Post address
